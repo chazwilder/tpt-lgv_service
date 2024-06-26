@@ -6,7 +6,7 @@ use log::info;
 use crate::interfaces::ILgv;
 
 
-pub async fn plc_to_rabbitmq(lgv: ILgv) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn plc_to_rabbitmq(lgv: ILgv) -> Result<(), anyhow::Error> {
     dotenv().ok();
 
     let addr = env::var("RABBITMQ_URL").expect("RABBITMQ_URL must be set");
@@ -39,6 +39,6 @@ pub async fn plc_to_rabbitmq(lgv: ILgv) -> Result<(), Box<dyn std::error::Error>
                 )
                 .await?;
 
-            info!("Published event to RabbitMQ exchange 'lgv_plc': {:#?}", &lgv);
+            info!("Published event to RabbitMQ exchange 'lgv_plc': {:?}", &lgv);
     Ok(())
 }

@@ -9,7 +9,7 @@ use dotenvy::dotenv;
 use log::info;
 
 pub async fn get_lgv_values(i: &str) -> Result<ILgv, anyhow::Error> {
-    info!("Trying PLC for {:#?}", &i);
+    info!("Trying PLC for {:?}", &i);
     dotenv().ok();
 
     let ID_TAG: String = env::var("LGV_ID").unwrap_or_default();
@@ -62,7 +62,7 @@ pub async fn get_lgv_values(i: &str) -> Result<ILgv, anyhow::Error> {
         };
         Ok(lgv)
     } else {
-        info!("PLC connection for {:#?} failed.", &i);
+        info!("PLC connection for {:?} failed.", &i);
         Ok(ILgv::default())
     }
 }
