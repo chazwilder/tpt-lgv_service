@@ -1,15 +1,17 @@
 use std::env;
-use lgv_service_lib::domain::{get_lgv_values, load_ips, plc_to_rabbitmq};
+use lgv_service_lib::domain::{get_lgv_values, load_ips, plc_to_rabbitmq, load_lgv_config};
 use log::{error, info};
 use log4rs;
 use warp::Filter;
 
 async fn run_tasks() -> Result<(), anyhow::Error> {
     loop {
-        let lgv_ips = load_ips().await;
+        //let lgv_ips = load_ips().await;
+        let lgvs = load_lgv_config().await?;
+        println!("{:?}", lgvs);
         let mut tasks = Vec::new();
 
-        for ip in lgv_ips {
+        for ip in &lgvs {
             let ip_clone = ip.clone();
             let task = tokio::spawn(async move {
                 match get_lgv_values(&ip_clone).await {
@@ -22,7 +24,7 @@ async fn run_tasks() -> Result<(), anyhow::Error> {
                         }
                     }
                     Err(e) => {
-                        error!("Failed to get LGV values for {}: {:?}", ip_clone, e);
+                        error!("Failed to get LGV values for {:?}: {:?}", ip_clone, e);
                     }
                 }
             });
